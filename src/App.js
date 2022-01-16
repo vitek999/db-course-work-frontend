@@ -38,7 +38,7 @@ function App() {
                                 </Typography>
                             </Button>
 
-                            <Button color={'inherit'} component={Link} to={'/peoples'} style={{marginLeft: '10px'}}>
+                            <Button color={'inherit'} component={Link} to={'/'} style={{marginLeft: '10px'}}>
                                 <ApartmentIcon/>
                                 <Typography variant="h6" component="div" style={{paddingLeft: '5px'}}>
                                     Список отелей
