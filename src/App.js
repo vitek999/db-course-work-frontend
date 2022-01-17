@@ -16,12 +16,15 @@ import PeopleIcon from '@mui/icons-material/People';
 import ApartmentIcon from '@mui/icons-material/Apartment';
 import {HotelsList} from "./hotels/HotelsList";
 import {Hotel} from "./hotels/Hotel";
+import {LocalizationProvider} from "@mui/lab";
+import DateAdapter from '@mui/lab/AdapterMoment';
 
 const mdTheme = createTheme();
 
 function App() {
     return (
         <div className="App">
+            <LocalizationProvider dateAdapter={DateAdapter}>
             <ThemeProvider theme={mdTheme}>
                 <CssBaseline/>
                 <Box sx={{flexGrow: 1}}>
@@ -58,6 +61,7 @@ function App() {
                     </Box>
                 </Container>
             </ThemeProvider>
+            </LocalizationProvider>
         </div>
     );
 }
