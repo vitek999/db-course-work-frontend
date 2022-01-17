@@ -13,50 +13,13 @@ import {
     ListItemAvatar,
     ListItemButton,
     ListItemText,
-    Paper,
-    styled,
     TextField
 } from "@mui/material";
 import {useEffect, useState} from "react";
 import ky from "ky";
 import DeleteIcon from '@mui/icons-material/Delete';
-
-const Item = styled(Paper)(({theme}) => ({
-    ...theme.typography.body2,
-    padding: theme.spacing(1),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-}));
-
-function stringToColor(string) {
-    let hash = 0;
-    let i;
-
-    /* eslint-disable no-bitwise */
-    for (i = 0; i < string.length; i += 1) {
-        hash = string.charCodeAt(i) + ((hash << 5) - hash);
-    }
-
-    let color = '#';
-
-    for (i = 0; i < 3; i += 1) {
-        const value = (hash >> (i * 8)) & 0xff;
-        color += `00${value.toString(16)}`.substr(-2);
-    }
-    /* eslint-enable no-bitwise */
-
-    return color;
-}
-
-function stringAvatar(name) {
-    return {
-        sx: {
-            bgcolor: stringToColor(name),
-        },
-        children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
-    };
-}
-
+import {Item} from "../components/Item";
+import {stringAvatar} from "../utlils/avatar";
 
 export function Peoples() {
     const [peoples, setPeoples] = useState([])
@@ -217,7 +180,7 @@ export function Peoples() {
                 </Grid>
             </Grid>
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>{ isEditModalState ? 'Редактирование' : 'Регистрация'} пользователя</DialogTitle>
+                <DialogTitle>{isEditModalState ? 'Редактирование' : 'Регистрация'} пользователя</DialogTitle>
                 <DialogContent>
                     {modalErrorMessage && <Alert severity="error">{modalErrorMessage}</Alert>}
                     <TextField
@@ -269,7 +232,8 @@ export function Peoples() {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => handleClose()}>Отмена</Button>
-                    <Button onClick={() => isEditModalState ? handleUpdatePeople() : handleSavePeople()} disabled={!isSaveEnabled}>{ isEditModalState ? 'Сохранить' : 'Зарегистрировать'}</Button>
+                    <Button onClick={() => isEditModalState ? handleUpdatePeople() : handleSavePeople()}
+                            disabled={!isSaveEnabled}>{isEditModalState ? 'Сохранить' : 'Зарегистрировать'}</Button>
                 </DialogActions>
             </Dialog>
         </>

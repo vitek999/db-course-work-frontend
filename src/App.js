@@ -15,6 +15,7 @@ import {Peoples} from "./peoples/Peoples";
 import PeopleIcon from '@mui/icons-material/People';
 import ApartmentIcon from '@mui/icons-material/Apartment';
 import {HotelsList} from "./hotels/HotelsList";
+import {Hotel} from "./hotels/Hotel";
 
 const mdTheme = createTheme();
 
@@ -52,6 +53,7 @@ function App() {
                         <Routes>
                             <Route path={'/'} element={<HotelsList/>}/>
                             <Route path={'/peoples'} element={<Peoples/>}/>
+                            <Route path={'/hotel/:hotelId'} element={<Hotel/>}/>
                         </Routes>
                     </Box>
                 </Container>
