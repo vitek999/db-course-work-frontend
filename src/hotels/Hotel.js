@@ -155,6 +155,11 @@ export function Hotel() {
                                                 Перейти к истории
                                             </Button>
                                         </Grid>
+                                        <Grid item>
+                                            <Button variant={'outlined'} component={Link} to={`/rooms/hotel/${getHotelId()}`}>
+                                                Комнаты
+                                            </Button>
+                                        </Grid>
                                     </Grid>
                                 </Item>
                             </Grid>

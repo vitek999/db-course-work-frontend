@@ -19,6 +19,7 @@ import {Hotel} from "./hotels/Hotel";
 import {LocalizationProvider} from "@mui/lab";
 import DateAdapter from '@mui/lab/AdapterMoment';
 import {HotelHistory} from "./hotels/HotelHistory";
+import {HotelRooms} from "./hotels/HotelRooms";
 
 const mdTheme = createTheme();
 
@@ -59,6 +60,7 @@ function App() {
                             <Route path={'/peoples'} element={<Peoples/>}/>
                             <Route path={'/hotel/:hotelId'} element={<Hotel/>}/>
                             <Route path={'/history/hotel/:hotelId'} element={<HotelHistory/>}/>
+                            <Route path={'/rooms/hotel/:hotelId'} element={<HotelRooms/>}/>
                         </Routes>
                     </Box>
                 </Container>
