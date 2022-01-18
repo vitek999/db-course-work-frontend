@@ -2,13 +2,23 @@ import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import ky from "ky";
 import {
-    Button, Divider,
-    Grid, IconButton,
+    Alert,
+    Box,
+    Button, Chip,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Divider,
+    Grid,
     List,
     ListItem,
     ListItemButton,
     ListItemIcon,
     ListItemText,
+    MenuItem,
+    OutlinedInput,
+    Select,
     TextField,
     Typography
 } from "@mui/material";
@@ -25,6 +35,11 @@ export function Hotel() {
     const [availableRooms, setAvailableRooms] = useState([])
 
     const [peoples, setPeoples] = useState([])
+
+    const [isDialogOpen, setDialogOpen] = useState(false)
+    const [modalErrorMessage, setModalErrorMessage] = useState(null)
+    const [selectedUsers, setSelectedUsers] = useState([])
+    const [selectedRoom, setSelectedRoom] = useState(null)
 
     const [startDateField, setStartDateField] = useState(moment())
     const [endDateField, setEndDateField] = useState(moment().add(5, 'days'))
@@ -50,6 +65,43 @@ export function Hotel() {
         }
         a()
     }, [])
+
+    const handleDialogOpen = (roomId) => {
+        setDialogOpen(true)
+        setSelectedRoom(roomId)
+    };
+
+    const handleDialogClose = () => {
+        setDialogOpen(false)
+        setSelectedUsers([])
+        setSelectedRoom(null)
+        setModalErrorMessage(null)
+    };
+
+    const handleUserChange = (event) => {
+        setSelectedUsers(event.target.value);
+        console.log(event.target.value)
+    };
+
+    const handleCheckIntoHotel = async () => {
+        const response = await ky.post('http://localhost:8080/schedule/book', {
+            json: {
+                roomId: selectedRoom,
+                users: selectedUsers.map(user => user._id),
+                startDate: convertToEpochDays(startDateField),
+                endDate: convertToEpochDays(endDateField)
+            },
+            throwHttpErrors: false
+        })
+        if (response.status === 400) {
+            const errorMessage = await response.text()
+            setModalErrorMessage(errorMessage)
+        }
+        if(response.ok) {
+            await handleSearchAvailableRoomsButtonClick()
+            handleDialogClose()
+        }
+    };
 
     const handleSearchAvailableRoomsButtonClick = async () => {
         const response = await ky.get(`http://localhost:8080/schedule/available?startDate=${convertToEpochDays(startDateField)}&endDate=${convertToEpochDays(endDateField)}&hotelId=${getHotelId()}`)
@@ -118,10 +170,13 @@ export function Hotel() {
                                             availableRooms.map(value =>
                                                 <>
                                                     <ListItem secondaryAction={
-                                                        <Button variant={'outlined'} edge={'end'} onClick={() => 5}>
+                                                        <Button variant={'outlined'} edge={'end'}
+                                                                onClick={() => handleDialogOpen(value.id)}>
                                                             Заселить
                                                         </Button>
-                                                    }>
+                                                    }
+                                                              key={value.id}
+                                                    >
                                                         <ListItemButton dense>
                                                             <ListItemIcon>
                                                                 <RoomIcon/>
@@ -167,6 +222,28 @@ export function Hotel() {
                     </Grid>
                 </Grid>
             }
+            <Dialog open={isDialogOpen} onClose={handleDialogClose}>
+                <DialogTitle>Заселение</DialogTitle>
+                <DialogContent>
+                    {modalErrorMessage && <Alert severity="error">{modalErrorMessage}</Alert>}
+                    <Select value={selectedUsers} onChange={handleUserChange} multiple
+                            input={<OutlinedInput id="select-multiple-chip" label="Выберите посетителя"/>}
+                            renderValue={(selected) => (
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    {selected.map((value) => (
+                                        <Chip key={value._id} label={`${value.lastName} ${value.firstName}`} />
+                                    ))}
+                                </Box>
+                            )}
+                    >
+                        {peoples.map(item => <MenuItem value={item}>{item.lastName} {item.firstName}</MenuItem>)}
+                    </Select>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDialogClose}>Отмена</Button>
+                    <Button onClick={() => handleCheckIntoHotel()}>Заселить</Button>
+                </DialogActions>
+            </Dialog>
         </>
     )
 }
