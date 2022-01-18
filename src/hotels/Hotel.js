@@ -1,16 +1,30 @@
 import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import ky from "ky";
-import {Button, Grid, List, ListItem, ListItemText, TextField, Typography} from "@mui/material";
+import {
+    Button, Divider,
+    Grid, IconButton,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    TextField,
+    Typography
+} from "@mui/material";
 import {Item} from "../components/Item";
 import {DatePicker} from "@mui/lab";
 import {convertToEpochDays} from "../utlils/date";
 import moment from "moment";
+import RoomIcon from '@mui/icons-material/Room';
+import SearchIcon from '@mui/icons-material/Search';
 
 export function Hotel() {
     const params = useParams()
     const [hotel, setHotel] = useState(null)
     const [availableRooms, setAvailableRooms] = useState([])
+
+    const [peoples, setPeoples] = useState([])
 
     const [startDateField, setStartDateField] = useState(moment())
     const [endDateField, setEndDateField] = useState(moment().add(5, 'days'))
@@ -28,6 +42,14 @@ export function Hotel() {
         a()
     }, [])
 
+    useEffect(() => {
+        const a = async () => {
+            const response = await ky.get('http://localhost:8080/users')
+            const fetchedPeoples = await response.json()
+            setPeoples(fetchedPeoples)
+        }
+        a()
+    }, [])
 
     const handleSearchAvailableRoomsButtonClick = async () => {
         const response = await ky.get(`http://localhost:8080/schedule/available?startDate=${convertToEpochDays(startDateField)}&endDate=${convertToEpochDays(endDateField)}&hotelId=${getHotelId()}`)
@@ -82,6 +104,7 @@ export function Hotel() {
                         </Grid>
                         <Grid item xs={'auto'}>
                             <Button variant={'contained'} onClick={() => handleSearchAvailableRoomsButtonClick()}>
+                                <SearchIcon/>
                                 Найти свободные комнаты
                             </Button>
                         </Grid>
@@ -93,9 +116,46 @@ export function Hotel() {
                                     <List xs={{width: "100%"}}>
                                         {
                                             availableRooms.map(value =>
-                                                <ListItem dense>
-                                                    <ListItemText>{value.number}</ListItemText>
-                                                </ListItem>
+                                                <>
+                                                    <ListItem secondaryAction={
+                                                        <Button variant={'outlined'} edge={'end'} onClick={() => 5}>
+                                                            Заселить
+                                                        </Button>
+                                                    }>
+                                                        <ListItemButton dense>
+                                                            <ListItemIcon>
+                                                                <RoomIcon/>
+                                                            </ListItemIcon>
+                                                            <ListItemText
+                                                                primary={
+                                                                    <Typography
+                                                                        sx={{display: 'inline'}}
+                                                                        component="span"
+                                                                        variant="body2"
+                                                                        color="text.primary"
+                                                                    >
+                                                                        Номер: {value.number}
+                                                                    </Typography>
+                                                                }
+                                                                secondary={
+                                                                    <>
+                                                                        <Typography
+                                                                            sx={{display: 'inline'}}
+                                                                            component="span"
+                                                                            variant="body2"
+                                                                        >
+                                                                            Количество спальных
+                                                                            мест: {value.sleepingPlaces} |
+                                                                            Стоимость: {value.cost} |
+                                                                            Тип: {value.roomType.name}
+                                                                        </Typography>
+                                                                    </>
+                                                                }
+                                                            />
+                                                        </ListItemButton>
+                                                    </ListItem>
+                                                    <Divider/>
+                                                </>
                                             )
                                         }
                                     </List> : <Typography>
