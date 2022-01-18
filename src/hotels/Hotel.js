@@ -5,18 +5,21 @@ import {Button, Grid, List, ListItem, ListItemText, TextField, Typography} from 
 import {Item} from "../components/Item";
 import {DatePicker} from "@mui/lab";
 import {convertToEpochDays} from "../utlils/date";
+import moment from "moment";
 
 export function Hotel() {
     const params = useParams()
     const [hotel, setHotel] = useState(null)
     const [availableRooms, setAvailableRooms] = useState([])
 
-    const [startDateField, setStartDateField] = useState(null)
-    const [endDateField, setEndDateField] = useState(null)
+    const [startDateField, setStartDateField] = useState(moment())
+    const [endDateField, setEndDateField] = useState(moment().add(5, 'days'))
+
+    const getHotelId = () => params.hotelId;
 
     useEffect(() => {
         const a = async () => {
-            const response = await ky.get(`http://localhost:8080/hotels/${params.hotelId}`, {throwHttpErrors: false})
+            const response = await ky.get(`http://localhost:8080/hotels/${getHotelId()}`, {throwHttpErrors: false})
             if (response.ok) {
                 const fetchedHotel = await response.json()
                 setHotel(fetchedHotel)
@@ -27,7 +30,7 @@ export function Hotel() {
 
 
     const handleSearchAvailableRoomsButtonClick = async () => {
-        const response = await ky.get(`http://localhost:8080/schedule/available?startDate=${convertToEpochDays(startDateField)}&endDate=${convertToEpochDays(endDateField)}`)
+        const response = await ky.get(`http://localhost:8080/schedule/available?startDate=${convertToEpochDays(startDateField)}&endDate=${convertToEpochDays(endDateField)}&hotelId=${getHotelId()}`)
         const fetchedRooms = await response.json()
         setAvailableRooms(fetchedRooms)
     }
