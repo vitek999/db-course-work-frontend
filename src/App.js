@@ -18,6 +18,7 @@ import {HotelsList} from "./hotels/HotelsList";
 import {Hotel} from "./hotels/Hotel";
 import {LocalizationProvider} from "@mui/lab";
 import DateAdapter from '@mui/lab/AdapterMoment';
+import {HotelHistory} from "./hotels/HotelHistory";
 
 const mdTheme = createTheme();
 
@@ -57,6 +58,7 @@ function App() {
                             <Route path={'/'} element={<HotelsList/>}/>
                             <Route path={'/peoples'} element={<Peoples/>}/>
                             <Route path={'/hotel/:hotelId'} element={<Hotel/>}/>
+                            <Route path={'/history/hotel/:hotelId'} element={<HotelHistory/>}/>
                         </Routes>
                     </Box>
                 </Container>

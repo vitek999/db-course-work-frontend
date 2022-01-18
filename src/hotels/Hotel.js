@@ -1,4 +1,4 @@
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import ky from "ky";
 import {
@@ -129,7 +129,7 @@ export function Hotel() {
                         <Grid container item xs>
                             <Grid item xs={12}>
                                 <Item>
-                                    <Grid container spacing={1}>
+                                    <Grid container spacing={1} alignItems={'center'} justifyContent={'space-between'}>
                                         <Grid item>
                                             <DatePicker
                                                 label="Дата начала"
@@ -149,6 +149,11 @@ export function Hotel() {
                                                 }}
                                                 renderInput={(params) => <TextField {...params} />}
                                             />
+                                        </Grid>
+                                        <Grid item>
+                                            <Button variant={'outlined'} component={Link} to={`/history/hotel/${getHotelId()}`}>
+                                                Перейти к истории
+                                            </Button>
                                         </Grid>
                                     </Grid>
                                 </Item>
